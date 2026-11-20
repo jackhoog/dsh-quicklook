@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>QL · 划词小窗</title>
+<link rel="stylesheet" href="/qk/app.css">
+</head>
+<body>
+<header class="bar">
+  <div class="seg" id="mode">
+    <button type="button" data-mode="translate" class="on">译</button>
+    <button type="button" data-mode="ask">问</button>
+  </div>
+  <span class="badges" id="badges"></span>
+  <span class="spacer"></span>
+  <button type="button" class="ghost icon" id="pin" title="钉住：新划词不覆盖当前内容">
+    <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
+      <path d="M9 2.5h6l-.9 5.2 3.9 2.9v2.1h-5.4v5.9L12 21.5l-.6-2.9v-5.9H6v-2.1l3.9-2.9z" fill="currentColor"/>
+    </svg>
+  </button>
+  <button type="button" class="ghost" id="more" title="设置">⋯</button>
+</header>
+
+<main id="panes">
+  <section class="pane" data-pane="translate">
+    <textarea class="source" id="source-translate" rows="2"
+      placeholder="选中文字后按 Ctrl+Shift+Q，或直接把文字粘贴到这里（Enter 翻译，Shift+Enter 换行）"></textarea>
+    <div class="shot" id="shot-translate" hidden>
+      <img class="shot-img" alt="截图">
+      <div class="shot-actions">
+        <button type="button" class="ghost shot-ocr">重新识别</button>
+      </div>
+    </div>
+    <div class="out" id="out-translate"></div>
+    <div class="dict" id="dict-translate" hidden></div>
+    <div class="actions">
+      <button type="button" class="ghost act-clear" title="清空输入">×</button>
+      <span class="spacer"></span>
+      <button type="button" class="ghost act-expand" hidden>展开详细</button>
+      <button type="button" class="ghost act-copy">复制</button>
+      <button type="button" class="ghost act-star" title="收藏">☆</button>
+      <button type="button" class="ghost act-speak" title="朗读">读</button>
+    </div>
+  </section>
+
+  <section class="pane" data-pane="ask" hidden>
+    <textarea class="source" id="source-ask" rows="2"
+      placeholder="选中文字后按 Ctrl+Shift+E，或直接把文字粘贴到这里"></textarea>
+    <div class="shot" id="shot-ask" hidden>
+      <img class="shot-img" alt="截图">
+      <div class="shot-actions">
+        <button type="button" class="ghost shot-ocr">转文字</button>
+        <button type="button" class="ghost shot-send">发给模型</button>
+      </div>
+    </div>
+    <div class="out" id="out-ask"></div>
+    <div class="dict" id="dict-ask" hidden></div>
+    <div class="actions">
+      <button type="button" class="ghost act-clear" title="清空输入">×</button>
+      <span class="spacer"></span>
+      <button type="button" class="ghost act-expand" hidden>展开详细</button>
+      <button type="button" class="ghost act-copy">复制</button>
+      <button type="button" class="ghost act-star" title="收藏">☆</button>
+      <button type="button" class="ghost act-speak" title="朗读">读</button>
+    </div>
+  </section>
+
+  <div id="feed-wrap" class="feed-wrap" hidden>
+    <div class="feed-head">
+      <span id="feed-title">历史</span>
+      <span class="spacer"></span>
+      <button type="button" class="ghost" id="clear-history">清空</button>
+    </div>
+    <div id="feed" class="feed"></div>
+  </div>
+</main>
+
+<footer class="composer">
+  <div class="presets" id="presets" hidden></div>
+  <div class="row">
+    <input id="question" type="text" placeholder="就这段内容提问…" autocomplete="off" hidden>
+    <span class="spacer"></span>
+    <button type="button" class="ghost" id="web" title="强制联网检索">联网</button>
+    <button type="button" class="primary" id="run">翻译</button>
+  </div>
+</footer>
+
+<aside id="drawer" hidden>
+  <h2>设置</h2>
+  <label class="field">热键 · 翻译
+    <input id="hk-translate" readonly>
+  </label>
+  <label class="field">热键 · 对话
+    <input id="hk-ask" readonly>
+  </label>
+  <label class="field">换行归一化
+    <select id="normalize">
+      <option value="auto">自动</option>
+      <option value="on">强制开</option>
+      <option value="off">关</option>
+    </select>
+  </label>
+  <label class="field">输出预算
+    <select id="budget">
+      <option value="1">精简（推荐）</option>
+      <option value="0">完整</option>
+    </select>
+  </label>
+  <label class="field">翻译方向
+    <select id="target">
+      <option value="auto">自动</option>
+      <option value="zh2en">中译英</option>
+      <option value="en2zh">英译中</option>
+      <option value="to-zh">一律译中</option>
+    </select>
+  </label>
+  <label class="field">窗口尺寸（宽 × 高）
+    <span class="inline">
+      <input id="win-width" type="number" min="200" max="1200">
+      <span>×</span>
+      <input id="win-height" type="number" min="160" max="1600">
+    </span>
+  </label>
+  <label class="field">翻译模型
+    <select id="model-translate"><option value="">跟随 DSH 默认</option></select>
+  </label>
+  <label class="field">提问模型
+    <select id="model-ask"><option value="">跟随 DSH 默认</option></select>
+  </label>
+  <button type="button" class="ghost" id="load-models">加载模型列表</button>
+  <label class="field">联网
+    <select id="search-mode">
+      <option value="auto">自动判断</option>
+      <option value="on">总是联网</option>
+      <option value="off">不联网</option>
+    </select>
+  </label>
+  <label class="field">单词出词典卡
+    <input id="dict-card" type="checkbox">
+  </label>
+  <label class="field">带上来源（窗口标题）
+    <input id="include-source" type="checkbox">
+  </label>
+  <label class="field">术语表（每行 源=译，翻译时强制遵守）
+    <textarea id="glossary" rows="4" placeholder="neural network=神经网络&#10;latency=时延"></textarea>
+  </label>
+  <button type="button" class="ghost" id="save-glossary">保存术语表</button>
+  <div class="field">壳状态
+    <span id="shell" class="mono">—</span>
+  </div>
+  <div class="row-actions">
+    <button type="button" class="ghost" id="export-words">导出生词本</button>
+  </div>
+  <p class="hint">点一下热键框，再按下新的组合键即可修改。改完自动重启壳。</p>
+  <button type="button" class="primary" id="close-drawer">完成</button>
+</aside>
+
+<script src="/qk/app.js"></script>
+</body>
+</html>

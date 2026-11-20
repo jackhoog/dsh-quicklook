@@ -1,0 +1,7 @@
+{
+  "meta": {
+    "title": "Quicklook",
+    "description": "Select text in any application and press a hotkey to get an always-on-top window for translation or questions. Your current app keeps focus and the DSH window stays hidden. Hotkeys are editable in the window.",
+    "detail": "docs/DETAIL.md"
+  }
+}
